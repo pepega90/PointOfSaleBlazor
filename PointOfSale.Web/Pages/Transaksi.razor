@@ -1,0 +1,119 @@
+﻿@page "/transaksi"
+@inherits TransaksiBase
+
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">List Barang</h5>
+                <input @oninput="SearchBarang" class="form-control" placeholder="Cari produk..." />
+                @if (listBarang == null)
+                {
+
+                    <h6 class="card-subtitle mb-2">Tidak ada barang!</h6>
+                }
+                else
+                {
+                    <div style="height: 245px; overflow: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nama Barang</th>
+                                    <th scope="col">Harga</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var barang in listBarang)
+                                {
+                                    var showHarga = string.Format(new System.Globalization.CultureInfo("id-ID"), "{0:C}", barang.Harga);
+                                    <tr>
+                                        <td>@barang.NamaBarang</td>
+                                        <td>@showHarga</td>
+                                        <td>
+                                            <button @onclick="(() => AddBarang(barang.Id))" class="btn btn-sm btn-primary">Tambah</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="mt-2">
+                        Jumlah
+                        <input type="number" @bind="Jumlah" class="form-control" />
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Kasir</h5>
+                @if (BarangPembelis == null)
+                {
+
+                    <h6 class="card-subtitle mb-2">Tidak ada produk yang di beli!</h6>
+                }
+                else
+                {
+                    <div style="height: 245px; overflow: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nama Produk</th>
+                                    <th scope="col">Harga</th>
+                                    <th scope="col">Jumlah</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (BarangPembelis.Any())
+                                {
+                                    @foreach (var produk in BarangPembelis)
+                                    {
+                                        var showHarga = string.Format(new System.Globalization.CultureInfo("id-ID"), "{0:C}", produk.Barang.Harga);
+                                        <tr>
+                                            <td>@produk.Barang.NamaBarang</td>
+                                            <td>@showHarga</td>
+                                            <td>@produk.Quantity</td>
+                                            <td>
+                                                <button @onclick="(() => HapusProduk(produk.Id))" class="btn btn-sm btn-danger">Hapus</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <p class="mt-lg-5">Tidak ada pembelian!</p>
+                                </td>
+                                <td></td>
+                            </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr />
+                    <p class="mt-3">
+                        <b style="margin-right: 6em;">Total Harga: </b> @DisplayTotalHarga
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-4">
+    <EditForm Model="BayarPembeli" OnSubmit="BayarProduk">
+        <label for="bayar">Bayar</label>
+        <p>
+            Rp
+            <InputNumber id="bayar" @bind-Value="BayarPembeli" class="form-control" />
+        </p>
+    </EditForm>
+</div>
+
+<h6><b>Kembalian:</b> @DisplayKembalian</h6>

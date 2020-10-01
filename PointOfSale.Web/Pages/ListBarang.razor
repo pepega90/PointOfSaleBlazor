@@ -1,0 +1,52 @@
+﻿@page "/listbarang"
+@inherits ListBarangBase
+
+<h3>List Barang</h3>
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <a href="/tambahbarang" class="btn btn-info mb-2">Tambah Barang</a>
+    </Authorized>
+</AuthorizeView>
+@if (Barangs == null)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Nama Barang</th>
+                    <th scope="col">Harga</th>
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            <th scope="col">Action</th>
+                        </Authorized>
+                    </AuthorizeView>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Barangs)
+                {
+                    ++noUrut;
+                    var showHarga = string.Format(new System.Globalization.CultureInfo("id-ID"), "{0:C}", item.Harga);
+                <tr>
+                    <th scope="row">@noUrut</th>
+                    <td>@item.NamaBarang</td>
+                    <td>@showHarga</td>
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            <td>
+                                <a href="/editbarang/@item.Id" class="btn btn-success">Edit</a>
+                                <button @onclick="(() => ShowModalHapusBarang(item.Id))" class="btn btn-danger">Hapus</button>
+                            </td>
+                        </Authorized>
+                    </AuthorizeView>
+                </tr>
+                }
+            </tbody>
+        </table>
+}
+<KonfirmasiHapus @ref="ConfirmRef" ConfirmDelete="HapusKonfirmasiBarang" />
